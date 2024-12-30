@@ -1,10 +1,19 @@
+"""
+В этом файле реализована логика работы клиента
+"""
 import threading
 import grpc
 import messenger_pb2_grpc
 import messenger_pb2
 import aes
+import exceptions
 
 class Client:
+    """
+    Экземпляры этого класса хранят все данные важные клиенту - адрес сервера, ник пользователя,
+    метка последнего сообщения
+    """
+
     def __init__(self, nickname, ip, key):
         self.nickname = nickname
         self.ip = ip
@@ -13,9 +22,12 @@ class Client:
         self.cryptor = aes.CryptoAES(key=key)
 
     def SendMessage(self):
+        """
+        Это функция отправляет на сервер вызов удаленной процедуры gRPC, в котором содержится зашифрованное
+        сообщение итд, а также в бесконечном цикле функция ждет ввода от пользователя, чтобы отправить его на сервер
+        """
         message = messenger_pb2.Message()
         message.nickname = self.nickname
-
         while True:
             try:
                 text_to_encrypt = input()
@@ -26,18 +38,28 @@ class Client:
                 print(e)
 
     def ChatStream(self):
+        """
+        Эта функция запускается в отдельном потоке для того, чтобы сканировать поток сообщений поступающих от сервера,
+        Функция выводит эти сообщения на экран
+        """
         responses = self.stub.ChatStream(messenger_pb2.Authorize(nickname=self.nickname, mark=self._mark))
         for response in responses:
+            # При подключении из потока из ChatStream проверяем, пришло ли особое сообщение о том, что ник занят
+            if response.cipher_text != b'Already taken':
+                # Если нет, то начинаем слушать этот поток
+                break
+            else:
+                raise exceptions.NicknameAlreadyTaken("Nickname already taken")
+        for response in responses:
             self._mark += 1
-            print(f"{response.nickname}: {self.cryptor.decrypt(response.cipher_text, response.tag, response.nonce).decode('utf-8')}")
+            print(
+                f"{response.nickname}: {self.cryptor.decrypt(response.cipher_text, response.tag, response.nonce).decode('utf-8')}")
 
 
-def main():
-    c = Client(input("Nickname: "), input("IP: "), input("[+] AES key: "))
+def run_client(c):
+    """
+    Получив экземпляр класса Client, функция запускает сканер потока сообщений и функцию отправки сообщений
+    """
     th = threading.Thread(target=c.ChatStream, daemon=True)
     th.start()
     c.SendMessage()
-
-
-if __name__ == '__main__':
-    main()

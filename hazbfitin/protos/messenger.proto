@@ -1,22 +1,37 @@
+/*
+Это proto файл, для протокола gRPC, в котором реализованы некоторые структуры данных,
+а также описаны удаленные процедуры
+*/
 syntax = "proto3";
 
 message Message {
+  /*
+  Это структура зашифрованного сообщения
+  */
   string nickname = 1;
   bytes cipher_text = 2;
   bytes tag = 3;
   bytes nonce = 4;
 }
 message Authorize {
+  /*
+  Это структура переменной для получения потока сообщений, указывается ник,
+  а также mark - последняя точка обновления листа сообщений
+  */
   string nickname = 1;
   int32 mark = 2;
 }
 
 
-message Empty {}
+message Empty {
+  /*
+  Затычка для функций не требующих возврата значений
+  */
+}
 
 service Chatting {
-  rpc ChatStream(Authorize) returns (stream Message);
-  rpc SendMessage(Message) returns (Empty);
+  rpc ChatStream(Authorize) returns (stream Message); // Получение непрерывного потока сообщений от сервера
+  rpc SendMessage(Message) returns (Empty); // Отправка сообщения на сервер
 }
 
 
