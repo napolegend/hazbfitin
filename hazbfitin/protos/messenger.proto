@@ -2,7 +2,9 @@ syntax = "proto3";
 
 message Message {
   string nickname = 1;
-  bytes data = 2;
+  bytes cipher_text = 2;
+  bytes tag = 3;
+  bytes nonce = 4;
 }
 message Authorize {
   string nickname = 1;

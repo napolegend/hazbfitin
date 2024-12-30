@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fmessenger.proto\")\n\x07Message\x12\x10\n\x08nickname\x18\x01 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\"+\n\tAuthorize\x12\x10\n\x08nickname\x18\x01 \x01(\t\x12\x0c\n\x04mark\x18\x02 \x01(\x05\"\x07\n\x05\x45mpty2Q\n\x08\x43hatting\x12$\n\nChatStream\x12\n.Authorize\x1a\x08.Message0\x01\x12\x1f\n\x0bSendMessage\x12\x08.Message\x1a\x06.Emptyb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fmessenger.proto\"L\n\x07Message\x12\x10\n\x08nickname\x18\x01 \x01(\t\x12\x13\n\x0b\x63ipher_text\x18\x02 \x01(\x0c\x12\x0b\n\x03tag\x18\x03 \x01(\x0c\x12\r\n\x05nonce\x18\x04 \x01(\x0c\"+\n\tAuthorize\x12\x10\n\x08nickname\x18\x01 \x01(\t\x12\x0c\n\x04mark\x18\x02 \x01(\x05\"\x07\n\x05\x45mpty2Q\n\x08\x43hatting\x12$\n\nChatStream\x12\n.Authorize\x1a\x08.Message0\x01\x12\x1f\n\x0bSendMessage\x12\x08.Message\x1a\x06.Emptyb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -32,11 +32,11 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'messenger_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_MESSAGE']._serialized_start=19
-  _globals['_MESSAGE']._serialized_end=60
-  _globals['_AUTHORIZE']._serialized_start=62
-  _globals['_AUTHORIZE']._serialized_end=105
-  _globals['_EMPTY']._serialized_start=107
-  _globals['_EMPTY']._serialized_end=114
-  _globals['_CHATTING']._serialized_start=116
-  _globals['_CHATTING']._serialized_end=197
+  _globals['_MESSAGE']._serialized_end=95
+  _globals['_AUTHORIZE']._serialized_start=97
+  _globals['_AUTHORIZE']._serialized_end=140
+  _globals['_EMPTY']._serialized_start=142
+  _globals['_EMPTY']._serialized_end=149
+  _globals['_CHATTING']._serialized_start=151
+  _globals['_CHATTING']._serialized_end=232
 # @@protoc_insertion_point(module_scope)
