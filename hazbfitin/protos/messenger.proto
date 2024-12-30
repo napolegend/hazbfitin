@@ -9,6 +9,7 @@ message Authorize {
   int32 mark = 2;
 }
 
+
 message Empty {}
 
 service Chatting {

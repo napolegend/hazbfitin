@@ -1,6 +1,4 @@
-import os
 import threading
-
 import grpc
 import messenger_pb2_grpc
 import messenger_pb2
@@ -16,26 +14,27 @@ class Client:
     def SendMessage(self):
         message = messenger_pb2.Message()
         message.nickname = self.nickname
+
         while True:
-            message.data = input().encode('utf-8')
             try:
-                a = self.stub.SendMessage(message)
+                message.data = input().encode('utf-8')
+                self.stub.SendMessage(message)
+                self._mark += 1
             except grpc.RpcError as e:
                 print(e)
 
     def ChatStream(self):
-        while True:
-            responses = self.stub.ChatStream(messenger_pb2.Authorize(nickname=self.nickname, mark=self._mark))
-            for response in responses:
-                self._mark += 1
-                print(f"{response.nickname}: {response.data.decode('utf-8')}")
-                os.system(f"say {response.data.decode('utf-8')}")
+        responses = self.stub.ChatStream(messenger_pb2.Authorize(nickname=self.nickname, mark=self._mark))
+        for response in responses:
+            self._mark += 1
+            print(f"{response.nickname}: {response.data.decode('utf-8')}")
 
 
 def main():
     c = Client(input("Nickname: "), input("IP: "))
-    #c.SendMessage()
-    c.ChatStream()
+    th = threading.Thread(target=c.ChatStream, daemon=True)
+    th.start()
+    c.SendMessage()
 
 
 if __name__ == '__main__':

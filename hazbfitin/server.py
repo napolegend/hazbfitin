@@ -9,9 +9,19 @@ class ChattingServicer(messenger_pb2_grpc.ChattingServicer):
         self._history = []
 
     def ChatStream(self, request, context):
-        for message in self._history[request.mark:]:
-            if message.nickname != request.nickname:
-                yield message
+        last_read = request.mark - 1
+        # Бесконечно отправляем сообщения, пока соединение активно
+        while context.is_active():
+            # Отправляем все сообщения из очереди неотправленных
+            while last_read < len(self._history) - 1:
+                last_read += 1
+                message = self._history[last_read]
+                # yield - это как бесконечный return.
+                # Функция будет возвращать значения снова и снова, когда вызывается yield.
+                # А с другой стороны мы сможем их получать просто циклом for in (вспоминаем итераторы в Python)
+                if message.nickname != request.nickname:
+                    yield message
+            # Добавим маленький sleep, чтобы снизить нагрузку на сервер постоянными проверками новых сообщений
 
     def SendMessage(self, request, context):
         self._history.append(request)
