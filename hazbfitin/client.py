@@ -1,20 +1,41 @@
+import os
 import threading
 
 import grpc
-import messenger_pb2
 import messenger_pb2_grpc
+import messenger_pb2
+
+
+class Client:
+    def __init__(self, nickname, ip):
+        self.nickname = nickname
+        self.ip = ip
+        self.stub = messenger_pb2_grpc.ChattingStub(grpc.insecure_channel(f"{self.ip}:50051"))
+        self._mark = 0
+
+    def SendMessage(self):
+        message = messenger_pb2.Message()
+        message.nickname = self.nickname
+        while True:
+            message.data = input().encode('utf-8')
+            try:
+                a = self.stub.SendMessage(message)
+            except grpc.RpcError as e:
+                print(e)
+
+    def ChatStream(self):
+        while True:
+            responses = self.stub.ChatStream(messenger_pb2.Authorize(nickname=self.nickname, mark=self._mark))
+            for response in responses:
+                self._mark += 1
+                print(f"{response.nickname}: {response.data.decode('utf-8')}")
+                os.system(f"say {response.data.decode('utf-8')}")
 
 
 def main():
-    with grpc.insecure_channel('localhost:50051') as channel:
-        stub = messenger_pb2_grpc.MainStub(channel)
-        while True:
-            try:
-                stub.SendMessage(
-                    messenger_pb2.Message(nickname="napolegend", datetime="Дыгъуасэ",
-                                          encrypted_text=input("Введите сообщение: ").encode('utf-8')))
-            except Exception as e:
-                print(e)
+    c = Client(input("Nickname: "), input("IP: "))
+    #c.SendMessage()
+    c.ChatStream()
 
 
 if __name__ == '__main__':

@@ -1,15 +1,19 @@
 syntax = "proto3";
 
-service Main {
-  rpc SendMessage(Message) returns(Empty);
-  rpc GetMessages(Empty) returns (Message);
-}
 message Message {
-   string nickname = 1;
-   string datetime = 2;
-   bytes encrypted_text = 3;
+  string nickname = 1;
+  bytes data = 2;
+}
+message Authorize {
+  string nickname = 1;
+  int32 mark = 2;
 }
 
-message Empty {
+message Empty {}
 
+service Chatting {
+  rpc ChatStream(Authorize) returns (stream Message);
+  rpc SendMessage(Message) returns (Empty);
 }
+
+

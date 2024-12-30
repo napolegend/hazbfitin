@@ -25,7 +25,7 @@ if _version_not_supported:
     )
 
 
-class MainStub(object):
+class ChattingStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -34,20 +34,26 @@ class MainStub(object):
         Args:
             channel: A grpc.Channel.
         """
+        self.ChatStream = channel.unary_stream(
+                '/Chatting/ChatStream',
+                request_serializer=messenger__pb2.Authorize.SerializeToString,
+                response_deserializer=messenger__pb2.Message.FromString,
+                _registered_method=True)
         self.SendMessage = channel.unary_unary(
-                '/Main/SendMessage',
+                '/Chatting/SendMessage',
                 request_serializer=messenger__pb2.Message.SerializeToString,
                 response_deserializer=messenger__pb2.Empty.FromString,
                 _registered_method=True)
-        self.GetMessages = channel.unary_unary(
-                '/Main/GetMessages',
-                request_serializer=messenger__pb2.Empty.SerializeToString,
-                response_deserializer=messenger__pb2.Message.FromString,
-                _registered_method=True)
 
 
-class MainServicer(object):
+class ChattingServicer(object):
     """Missing associated documentation comment in .proto file."""
+
+    def ChatStream(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def SendMessage(self, request, context):
         """Missing associated documentation comment in .proto file."""
@@ -55,35 +61,56 @@ class MainServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def GetMessages(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
 
-
-def add_MainServicer_to_server(servicer, server):
+def add_ChattingServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'ChatStream': grpc.unary_stream_rpc_method_handler(
+                    servicer.ChatStream,
+                    request_deserializer=messenger__pb2.Authorize.FromString,
+                    response_serializer=messenger__pb2.Message.SerializeToString,
+            ),
             'SendMessage': grpc.unary_unary_rpc_method_handler(
                     servicer.SendMessage,
                     request_deserializer=messenger__pb2.Message.FromString,
                     response_serializer=messenger__pb2.Empty.SerializeToString,
             ),
-            'GetMessages': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetMessages,
-                    request_deserializer=messenger__pb2.Empty.FromString,
-                    response_serializer=messenger__pb2.Message.SerializeToString,
-            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'Main', rpc_method_handlers)
+            'Chatting', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('Main', rpc_method_handlers)
+    server.add_registered_method_handlers('Chatting', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class Main(object):
+class Chatting(object):
     """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def ChatStream(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(
+            request,
+            target,
+            '/Chatting/ChatStream',
+            messenger__pb2.Authorize.SerializeToString,
+            messenger__pb2.Message.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
 
     @staticmethod
     def SendMessage(request,
@@ -99,36 +126,9 @@ class Main(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/Main/SendMessage',
+            '/Chatting/SendMessage',
             messenger__pb2.Message.SerializeToString,
             messenger__pb2.Empty.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def GetMessages(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/Main/GetMessages',
-            messenger__pb2.Empty.SerializeToString,
-            messenger__pb2.Message.FromString,
             options,
             channel_credentials,
             insecure,
