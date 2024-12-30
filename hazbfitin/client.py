@@ -8,6 +8,7 @@ import messenger_pb2
 import aes
 import exceptions
 
+
 class Client:
     """
     Экземпляры этого класса хранят все данные важные клиенту - адрес сервера, ник пользователя,
@@ -15,7 +16,13 @@ class Client:
     """
 
     def __init__(self, nickname, ip, key):
+        for l in nickname:
+            if l.lower() not in "abcdefghijklmnopqrstuvwxyz0123456789-_":
+                raise exceptions.InvalidNickname(f"Nickname has invalid symbols: {l}")
         self.nickname = nickname
+        for l in ip:
+            if l.lower() not in "abcdefghijklmnopqrstuvwxyz0123456789-_.":
+                raise exceptions.InvalidIP(f"IP address is invalid: {l}")
         self.ip = ip
         self.stub = messenger_pb2_grpc.ChattingStub(grpc.insecure_channel(f"{self.ip}:50051"))
         self._mark = 0

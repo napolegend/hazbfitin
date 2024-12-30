@@ -19,6 +19,20 @@ class MessageCorrupt(BaseAesException):
 
 class NicknameAlreadyTaken(BaseAesException):
     """
-        Exception raised when a Nickname is taken.
+     Exception raised when a Nickname is taken.
+    """
+    pass
+
+
+class InvalidNickname(BaseAesException):
+    """
+    Exception raised when a nickname is invalid.
+    """
+    pass
+
+
+class InvalidIP(BaseAesException):
+    """
+    Exception raised when an IP is invalid.
     """
     pass
