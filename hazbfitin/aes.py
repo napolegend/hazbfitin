@@ -12,7 +12,7 @@ class CryptoAES:
     чтобы хранить значения ключей и прочее
     """
     def __init__(self, key):
-        self.key = hashlib.sha256(key.encode()).digest()
+        self.key = hashlib.sha256(key.encode('utf-8')).digest()
 
     def encrypt(self, data):
         """
